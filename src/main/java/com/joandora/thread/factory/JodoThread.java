@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @ClassName: JodoThread
- * @Description: TODO
+ * @Description: 追踪thread线程声明周期，捕捉未检查异常
  * @author: JOANDORA
  * @date: 2015年12月26日 下午11:38:47
  */
