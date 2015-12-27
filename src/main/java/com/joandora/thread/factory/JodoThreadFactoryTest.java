@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName: JodoThreadFactoryTest
- * @Description: TODO
+ * @Description: 测试uncaughtException
  * @author: JOANDORA
  * @date: 2015年12月27日 上午12:16:37
  */
@@ -22,6 +22,7 @@ public class JodoThreadFactoryTest {
 	public static void main(String args[]) throws InterruptedException {
 		JodoThreadFactory jodoThreadFactory = new JodoThreadFactory("JOANDORA");
 		ExecutorService es = Executors.newFixedThreadPool(1,jodoThreadFactory);
+		// 这里要用execute，否则无法uncaughtException
 		es.execute(new Runnable() {
 			@Override
 			public void run() {
