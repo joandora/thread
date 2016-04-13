@@ -5,7 +5,6 @@ package com.joandora.nio.mycat.client.buffer;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,8 @@ public class BufferPool {
  	/**缓冲池容量**/
  	private final long capactiy;
  	private long sharedOptsCount;
-         private AtomicInteger newCreated = new AtomicInteger(0);
+ 	// The statistics variable newCreated: no need to be accurate for performance consideration!
+ 	private volatile int newCreated;
  	private final long threadLocalCount;
  	private long totalBytes = 0;
  	private long totalCounts = 0;
@@ -73,9 +73,14 @@ public class BufferPool {
  		}
  		node = items.poll();
  		if (node == null) {
- 			//newCreated++;
- 			newCreated.incrementAndGet();
- 			node = this.createDirectBuffer(chunkSize);
+        	    // Allocate from heap if direct buffer OOM occurs
+        	    try {
+        		node = this.createDirectBuffer(chunkSize);
+        		++newCreated;
+        	    } catch (final OutOfMemoryError oom) {
+        		LOGGER.warn("Direct buffer OOM occurs: so allocate from heap", oom);
+        		node = this.createTempBuffer(chunkSize);
+        	    }
  		}
  		return node;
  	}
@@ -181,7 +186,7 @@ public class BufferPool {
 	}
 
 	public long capacity() {
-		return capactiy + newCreated.get();
+	    return capactiy + newCreated;
 	}
 }
  

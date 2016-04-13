@@ -85,11 +85,20 @@ public class NIOReactor extends Thread{
 			LOGGER.debug("[{}] socket key canceled:{}", nioConnection.getId(), StringUtils.defaultString(e.getMessage()));
 		    } catch (Exception e) {
 			LOGGER.warn(nioConnection + " " + e);
-			break;
+		    }catch(final Throwable e){
+			// 防止发生如OOM等异常时，NIOReactor仍能继续运行
+			if(null != nioConnection && null != nioConnection.getSocketChannel()){
+			    NIOUtils.closeChannel(nioConnection.getSocketChannel());
+			}
+			LOGGER.error("caught err: {}",e.getMessage());
+			continue;
 		    }
 		}
 	    } catch (Exception e) {
-		LOGGER.error(e.getMessage());
+		LOGGER.error("caught err: {}",e.getMessage());
+	    }catch(final Throwable e){
+		// 防止发生如内存溢出等异常时，NIOReactor仍能继续运行
+		LOGGER.error("caught err: {}",e.getMessage());
 	    } finally {
 		if (keys != null) {
 		    keys.clear();
