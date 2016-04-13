@@ -33,9 +33,9 @@ import com.joandora.nio.mycat.client.util.NIOUtils;
  * @author JOANDORA
  * @date 2016年4月11日 下午4:35:39
  */
-public class NIOConnection {
+public class NIOHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NIOConnection.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NIOHandler.class);
 
     /** 客户端已建立连接的SocketChannel **/
     private SocketChannel socketChannel;
@@ -81,7 +81,7 @@ public class NIOConnection {
 
     private CharsetDecoder decoder;
 
-    public NIOConnection(SocketChannel socketChannel, NIOProcessor nioProcessor) throws IOException {
+    public NIOHandler(SocketChannel socketChannel, NIOProcessor nioProcessor) throws IOException {
 	setId();
 	setSocketChannel(socketChannel);
 	this.processor = nioProcessor;
@@ -96,7 +96,7 @@ public class NIOConnection {
      * <p>
      * 将参数Selector与SocketChannel进行绑定<br>
      * 并注册读事件<br>
-     * key添加附件：NIOConnection<br>
+     * key添加附件：nioHandler<br>
      * </p>
      */
     public void registerRead(Selector selector) {
@@ -111,7 +111,7 @@ public class NIOConnection {
      * <p>
      * 将参数Selector与SocketChannel进行绑定<br>
      * 并注写读事件<br>
-     * key添加附件：NIOConnection<br>
+     * key添加附件：nioHandler<br>
      * </p>
      */
     public void registerWrite(Selector selector) {
@@ -135,8 +135,7 @@ public class NIOConnection {
 	this.readBuffer.clear();
 	/***
 	 * 1、循环处理字节信息 2、如果不循环处理字节信息的话，那么就得规定客户端传过来的数据长度不能大于缓冲区长度，否则数据读取不完整
-	 * 3、当客户端channel关闭后
-	 * ，会不断收到read事件，但没有消息，即read方法返回-1，所以这时服务器端也需要关闭channel，避免无限无效的处理。
+	 * 3、当客户端channel关闭后，会不断收到read事件，但没有消息，即read方法返回-1，所以这时服务器端也需要关闭channel，避免死循环无效的处理。
 	 */
 	while (true) {
 	    int got = this.socketChannel.read(this.readBuffer);

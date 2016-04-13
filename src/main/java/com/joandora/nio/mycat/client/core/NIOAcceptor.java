@@ -111,9 +111,9 @@ public class NIOAcceptor extends Thread {
 	    socketChannel.configureBlocking(false);
 
 	    NIOProcessor nioProcessor = NIOProcessorPool.getInstance().getNextProcessor();
-	    NIOConnection nioConnection = new NIOConnection(socketChannel,nioProcessor);
+	    NIOHandler nioHandler = new NIOHandler(socketChannel,nioProcessor);
 	    NIOReactor reactor = reactorPool.getNextReactor();
-	    reactor.postRegister(nioConnection);
+	    reactor.postRegister(nioHandler);
 
 	} catch (Exception e) {
 	    LOGGER.warn(StringUtils.defaultString(e.getMessage()));

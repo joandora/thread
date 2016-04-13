@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.joandora.nio.mycat.client.core.NIOConnection;
+import com.joandora.nio.mycat.client.core.NIOHandler;
 
 /**
  * <p>
@@ -33,7 +33,7 @@ public class NIOProcessor {
 
     private final NameableExecutor executor;
 
-    private final ConcurrentMap<Long, NIOConnection> frontends;
+    private final ConcurrentMap<Long, NIOHandler> frontends;
 
 
     // 前端已连接数
@@ -43,7 +43,7 @@ public class NIOProcessor {
 	this.name = name;
 	this.bufferPool = bufferPool;
 	this.executor = executor;
-	this.frontends = new ConcurrentHashMap<Long, NIOConnection>();
+	this.frontends = new ConcurrentHashMap<Long, NIOHandler>();
     }
     /**
      * 定时执行该方法，回收部分资源。
@@ -54,12 +54,12 @@ public class NIOProcessor {
 
     // 前端连接检查
     private void frontendCheck() {
-	Iterator<Entry<Long, NIOConnection>> it = frontends.entrySet().iterator();
+	Iterator<Entry<Long, NIOHandler>> it = frontends.entrySet().iterator();
 	while (it.hasNext()) {
-	    NIOConnection nioConnection = it.next().getValue();
+	    NIOHandler nioHandler = it.next().getValue();
 
 	    // 删除空连接
-	    if (nioConnection == null) {
+	    if (nioHandler == null) {
 		it.remove();
 		this.frontendsLength.decrementAndGet();
 		continue;
@@ -68,7 +68,7 @@ public class NIOProcessor {
     }
     public int getWriteQueueSize() {
 	int total = 0;
-	for (NIOConnection fron : frontends.values()) {
+	for (NIOHandler fron : frontends.values()) {
 	    total += fron.getWriteQueue().size();
 	}
 	return total;
@@ -79,12 +79,12 @@ public class NIOProcessor {
 	return this.executor;
     }
 
-    public void addFrontend(NIOConnection c) {
+    public void addFrontend(NIOHandler c) {
 	this.frontends.put(c.getId(), c);
 	this.frontendsLength.incrementAndGet();
     }
 
-    public ConcurrentMap<Long, NIOConnection> getFrontends() {
+    public ConcurrentMap<Long, NIOHandler> getFrontends() {
 	return this.frontends;
     }
 

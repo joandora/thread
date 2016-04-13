@@ -34,18 +34,18 @@ public class NIOReactor extends Thread{
 
     private final Selector selector;
 
-    private final ConcurrentLinkedQueue<NIOConnection> registerQueue;
+    private final ConcurrentLinkedQueue<NIOHandler> registerQueue;
 
     /** 构造器 **/
     public NIOReactor(String name) throws IOException {
 	super.setName(name);
 	this.selector = Selector.open();
-	this.registerQueue = new ConcurrentLinkedQueue<NIOConnection>();
+	this.registerQueue = new ConcurrentLinkedQueue<NIOHandler>();
     }
 
-    /** 将NIOConnection放入注册队列中 **/
-    final void postRegister(NIOConnection nioConnection) {
-	this.registerQueue.offer(nioConnection);
+    /** 将nioHandler放入注册队列中 **/
+    final void postRegister(NIOHandler nioHandler) {
+	this.registerQueue.offer(nioHandler);
 	this.selector.wakeup();
     }
 
@@ -61,34 +61,34 @@ public class NIOReactor extends Thread{
 		    if (!key.isValid()) {
 			continue;
 		    }
-		    NIOConnection nioConnection = null;
+		    NIOHandler nioHandler = null;
 		    try {
 			Object att = key.attachment();
 			if (att != null) {
-			    nioConnection = (NIOConnection) att;
+			    nioHandler = (NIOHandler) att;
 			    if (key.isReadable()) {
 				try {
-				    nioConnection.syncRead();
-				    nioConnection.registerWrite(this.selector);
+				    nioHandler.syncRead();
+				    nioHandler.registerWrite(this.selector);
 				} catch (Exception e) {
-				    NIOUtils.closeChannel(nioConnection.getSocketChannel());
+				    NIOUtils.closeChannel(nioHandler.getSocketChannel());
 				    continue;
 				}
 			    }
 			    if (key.isWritable()) {
-				nioConnection.doNextWriteCheck();
+				nioHandler.doNextWriteCheck();
 			    }
 			} else {
 			    key.cancel();
 			}
 		    } catch (CancelledKeyException e) {
-			LOGGER.debug("[{}] socket key canceled:{}", nioConnection.getId(), StringUtils.defaultString(e.getMessage()));
+			LOGGER.debug("[{}] socket key canceled:{}", nioHandler.getId(), StringUtils.defaultString(e.getMessage()));
 		    } catch (Exception e) {
-			LOGGER.warn(nioConnection + " " + e);
+			LOGGER.warn(nioHandler + " " + e);
 		    }catch(final Throwable e){
 			// 防止发生如OOM等异常时，NIOReactor仍能继续运行
-			if(null != nioConnection && null != nioConnection.getSocketChannel()){
-			    NIOUtils.closeChannel(nioConnection.getSocketChannel());
+			if(null != nioHandler && null != nioHandler.getSocketChannel()){
+			    NIOUtils.closeChannel(nioHandler.getSocketChannel());
 			}
 			LOGGER.error("caught err: {}",e.getMessage());
 			continue;
@@ -116,21 +116,21 @@ public class NIOReactor extends Thread{
      * </p>
      */
     private void register(Selector selector) {
-	NIOConnection nioConnection = null;
+	NIOHandler nioHandler = null;
 	SocketChannel socketChannel = null;
 	if (registerQueue.isEmpty()) {
 	    return;
 	}
-	while ((nioConnection = registerQueue.poll()) != null) {
+	while ((nioHandler = registerQueue.poll()) != null) {
 	    try {
-		nioConnection.registerRead(selector);// 注册读事件
+		nioHandler.registerRead(selector);// 注册读事件
 	    } catch (Exception e) {
 		NIOUtils.closeChannel(socketChannel);
 	    }
 	}
     }
 
-    public Queue<NIOConnection> getRegisterQueue() {
+    public Queue<NIOHandler> getRegisterQueue() {
 	return this.registerQueue;
     }
 }
