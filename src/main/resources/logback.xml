@@ -4,7 +4,7 @@
 	<!-- 控制台输出 -->
 	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+			<pattern>%date [%thread] %-5level %logger{10} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -21,7 +21,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+			<pattern>%date [%thread] %-5level %logger{10} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -38,7 +38,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+			<pattern>%date [%thread] %-5level %logger{10} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
@@ -58,7 +58,7 @@
 			<MaxHistory>30</MaxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%date [%thread] %-5level %logger{80} - %msg%n</pattern>
+			<pattern>%date [%thread] %-5level %logger{10} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
