@@ -5,11 +5,11 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WritableUtils {
-	public static final Log LOG = LogFactory.getLog(WritableUtils.class);
+	public static final Logger logger = LoggerFactory.getLogger(WritableUtils.class);
 	/*
 	 * Write a String as a Network Int n, followed by n Bytes Alternative to 16
 	 * bit read/writeUTF. Encoding standard is... ?
@@ -41,9 +41,7 @@ public class WritableUtils {
 	/**
 	 * Closes the stream ignoring {@link IOException}. Must only be called in
 	 * cleaning up from exception handlers.
-	 * 
-	 * @param stream
-	 *            the Stream to close
+	 * @param stream the Stream to close
 	 */
 	public static void closeStream(java.io.Closeable... closeables) {
 		for (java.io.Closeable c : closeables) {
@@ -51,8 +49,8 @@ public class WritableUtils {
 				try {
 					c.close();
 				} catch (IOException e) {
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Exception in closing " + c, e);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Exception in closing " + c, e);
 					}
 				}
 			}

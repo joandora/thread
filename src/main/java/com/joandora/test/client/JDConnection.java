@@ -39,7 +39,7 @@ import com.joandora.test.constant.Status;
 import com.joandora.test.data.ConnectionHeader;
 import com.joandora.test.data.DataOutputBuffer;
 import com.joandora.test.exception.RemoteException;
-import com.joandora.test.proxy.JDInvocation;
+import com.joandora.test.proxy.InvocationEntity;
 import com.joandora.test.server.ServerAbstract;
 import com.joandora.test.util.JDNetUtils;
 import com.joandora.test.util.WritableUtils;
@@ -206,7 +206,7 @@ public 	class JDConnection extends Thread {
 	 */
 	private synchronized boolean updateAddress() throws IOException {
 		// Do a fresh lookup with the old host name.
-		InetSocketAddress currentAddr = JDNetUtils.makeSocketAddr(
+		InetSocketAddress currentAddr = JDNetUtils.getSocketAddr(
 				server.getHostName(), server.getPort());
 
 		if (!server.equals(currentAddr)) {
@@ -517,10 +517,10 @@ public 	class JDConnection extends Thread {
 
 			int state = in.readInt();  //阻塞读取call对象的状态 
 			if (state == Status.SUCCESS.state) {
-				JDInvocation value = null;
+				InvocationEntity value = null;
 				try {
 					ObjectInputStream ois = new ObjectInputStream(in);  //读取数据 
-					value = (JDInvocation) ois.readObject();
+					value = (InvocationEntity) ois.readObject();
 				} catch (ClassNotFoundException e) {
 					logger.warn("not found class: " + e);
 				}

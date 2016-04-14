@@ -3,7 +3,7 @@ package com.joandora.examples;
 
 import java.net.InetSocketAddress;
 
-import com.joandora.test.proxy.JDRPCProxy;
+import com.joandora.test.proxy.RPCProxyWrapper;
 import com.joandora.test.util.JDNetUtils;
 
 public class InstancedClient {
@@ -24,13 +24,13 @@ public class InstancedClient {
 		if (args.length > 1)
 			host = args[1];
 
-		InetSocketAddress addr = JDNetUtils.makeSocketAddr(host, port);
+		InetSocketAddress addr = JDNetUtils.getSocketAddr(host, port);
 		// 创建代理
-		Echo proxy = JDRPCProxy.getProxy(Echo.class, addr);
+		Echo proxy = RPCProxyWrapper.getProxy(Echo.class, addr);
 		System.out.println("VVVVVVVVVV: " + proxy.who());
 		proxy.from("jakkkkkkki");
 
-		ICode proxyCode = JDRPCProxy.getProxy(ICode.class, addr);
+		ICode proxyCode = RPCProxyWrapper.getProxy(ICode.class, addr);
 		Code v = proxyCode.generate("bbbbbbbbbbbbbbb");
 		System.out.println(v.getLink().length());
 	}

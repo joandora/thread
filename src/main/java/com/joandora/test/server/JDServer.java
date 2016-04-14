@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.joandora.test.proxy.JDInvocation;
+import com.joandora.test.proxy.InvocationEntity;
 
 /** An RPC Server. */
 public class JDServer extends ServerAbstract {
@@ -45,7 +45,7 @@ public class JDServer extends ServerAbstract {
 	public Serializable call(Class<?> iface, Serializable param,
 			long receivedTime) throws IOException {
 		try {
-			JDInvocation call = (JDInvocation) param; //调用参数 Invocationd对象包含方法名称 形式参数列表和实际参数列表
+			InvocationEntity call = (InvocationEntity) param; //调用参数 Invocationd对象包含方法名称 形式参数列表和实际参数列表
 			if (verbose)
 			    logger.info("Call: " + call);
 			//从实例缓存中按照接口寻找实例对象

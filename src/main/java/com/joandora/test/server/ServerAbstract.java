@@ -43,12 +43,12 @@ import org.apache.commons.logging.LogFactory;
 import com.joandora.test.client.JDClient;
 import com.joandora.test.constant.Status;
 import com.joandora.test.data.ConnectionHeader;
-import com.joandora.test.proxy.JDInvocation;
+import com.joandora.test.proxy.InvocationEntity;
 import com.joandora.test.util.WritableUtils;
 
 /**
- * An abstract IPC service. IPC calls take a single {@link JDInvocation} as a
- * parameter, and return a {@link JDInvocation} as their value. A service runs on a
+ * An abstract IPC service. IPC calls take a single {@link InvocationEntity} as a
+ * parameter, and return a {@link InvocationEntity} as their value. A service runs on a
  * port and is defined by a parameter class and a value class.
  * 
  * @see JDClient
@@ -114,7 +114,7 @@ public abstract class ServerAbstract {
 	
 	/**
 	 * Returns the server instance called under or null. May be called under
-	 * {@link #call(JDInvocation, long)} implementations, and under {@link JDInvocation}
+	 * {@link #call(InvocationEntity, long)} implementations, and under {@link InvocationEntity}
 	 * methods of paramters and return values. Permits applications to access
 	 * the server context.
 	 */
@@ -1019,7 +1019,7 @@ public abstract class ServerAbstract {
 		}
     //处理一帧数据
     private void processData(byte[] buf) throws  IOException, InterruptedException {
-			JDInvocation param = null;
+			InvocationEntity param = null;
 			int id = 0;
 			try {
 				ByteArrayInputStream bais = new ByteArrayInputStream(buf);
@@ -1027,7 +1027,7 @@ public abstract class ServerAbstract {
 				id = ois.readInt();       //读取调用标志符
 				if (LOG.isDebugEnabled())
 					LOG.debug(" got #" + id);
-				param = (JDInvocation) ois.readObject(); //读取调用参数 Invocationd对象包含方法名称 形式参数列表和实际参数列表
+				param = (InvocationEntity) ois.readObject(); //读取调用参数 Invocationd对象包含方法名称 形式参数列表和实际参数列表
 			} catch (ClassNotFoundException e) {
 				LOG.warn("not found class: " + e);
 			}
