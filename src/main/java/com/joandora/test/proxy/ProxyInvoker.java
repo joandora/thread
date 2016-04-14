@@ -32,7 +32,7 @@ import com.joandora.test.client.JDConnectionId;
  * @date 2016年4月14日 下午2:30:18
  */
 public class ProxyInvoker<T> implements InvocationHandler {
-    private static final Logger logger = LoggerFactory.getLogger(JDRPCProxy.class);
+    private static final Logger logger = LoggerFactory.getLogger(RPCProxyWrapper.class);
     /**JDClient cache**/
     private static JDClientCache CLIENT_CACHE = new JDClientCache();
 
@@ -46,26 +46,26 @@ public class ProxyInvoker<T> implements InvocationHandler {
 
     // iface代表协议
     public ProxyInvoker(final Class<T> iface, InetSocketAddress address, SocketFactory factory, int rpcTimeout) throws IOException {
-	this.iface = iface;
-	this.connectionId = JDConnectionId.getConnectionId(address, iface, rpcTimeout);
-	this.jdClient = CLIENT_CACHE.getClient(factory);
+    	this.iface = iface;
+    	this.connectionId = JDConnectionId.getConnectionId(address, iface, rpcTimeout);
+    	this.jdClient = CLIENT_CACHE.getClient(factory);
     }
 
     /**rpc invoke**/
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-	long startTime = System.currentTimeMillis();
-	// 调用Client call方法
-	JDInvocation value = jdClient.call(new JDInvocation(iface, method, args), this.connectionId);
-	long callTime = System.currentTimeMillis() - startTime;
-	logger.info("call server successed,[{}ms],[{}],[{}]",callTime,method.getName(),args);
-	return value.getResult();
+    	long startTime = System.currentTimeMillis();
+    	// 调用Client call方法
+    	InvocationEntity value = jdClient.call(new InvocationEntity(iface, method, args), this.connectionId);
+    	long callTime = System.currentTimeMillis() - startTime;
+    	logger.info("call server successed,[{}ms],[{}],[{}]",callTime,method.getName(),args);
+    	return value.getResult();
     }
 
     /** close the IPC client that's responsible for this invoker's RPCs **/
     public synchronized void close() {
-	if (!isClosed) {
-	    isClosed = true;
-	    CLIENT_CACHE.stopClient(jdClient);
-	}
+    	if (!isClosed) {
+    		isClosed = true;
+    		CLIENT_CACHE.stopClient(jdClient);
+    	}
     }
 }

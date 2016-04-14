@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /** A method invocation, including the method name and its parameters. */
-public class JDInvocation implements Serializable {
+public class InvocationEntity implements Serializable {
 	/**
 	 * UID for serialized class.
 	 */
@@ -18,16 +18,7 @@ public class JDInvocation implements Serializable {
 	private Object[] parameters;         //参数值  
 	private Object result;               //结果
 
-	public JDInvocation() {
-	}
-
-	public JDInvocation(Method method, Object[] parameters) {
-		this.methodName = method.getName();
-		this.parameterClasses = method.getParameterTypes();
-		this.parameters = parameters;
-	}
-
-	public JDInvocation(Class<?> iface, Method method, Object[] parameters) {
+	public InvocationEntity(Class<?> iface, Method method, Object[] parameters) {
 		this.iface = iface;
 		this.methodName = method.getName();
 		this.parameterClasses = method.getParameterTypes();

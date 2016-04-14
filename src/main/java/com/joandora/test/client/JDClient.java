@@ -16,12 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.joandora.test.exception.RemoteException;
-import com.joandora.test.proxy.JDInvocation;
+import com.joandora.test.proxy.InvocationEntity;
 import com.joandora.test.server.ServerAbstract;
 import com.joandora.test.util.JDNetUtils;
 
 /** A client for an IPC service. <br> 
- * IPC calls take a single {@link JDInvocation} as a parameter, and return a {@link JDInvocation} as their value.  <br>
+ * IPC calls take a single {@link InvocationEntity} as a parameter, and return a {@link InvocationEntity} as their value.  <br>
  * 
  * @see ServerAbstract
  */
@@ -124,7 +124,7 @@ public class JDClient {
 	 * for this connection, returning the value. Throws exceptions if there are
 	 * network problems or if the remote code threw an exception.
 	 */
-	public Serializable call(JDInvocation param, InetSocketAddress addr,
+	public Serializable call(InvocationEntity param, InetSocketAddress addr,
 			Class<?> protocol, int rpcTimeout) throws InterruptedException,
 			IOException {
 		JDConnectionId remoteId = JDConnectionId.getConnectionId(addr, protocol,
@@ -137,7 +137,7 @@ public class JDClient {
 	 * <code>remoteId</code>, returning the value. Throws exceptions if there
 	 * are network problems or if the remote code threw an exception.
 	 */
-	public JDInvocation call(JDInvocation invoked, JDConnectionId remoteId)
+	public InvocationEntity call(InvocationEntity invoked, JDConnectionId remoteId)
 			throws InterruptedException, IOException {
 		JDClientCall call = new JDClientCall(invoked);    //将传入的数据封装成call对象 Serializable接口
 		//已经向服务器端 RPCHeader ConnectionHeader验证

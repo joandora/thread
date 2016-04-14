@@ -12,7 +12,7 @@ package com.joandora.test.client;
 import java.io.IOException;
 import java.io.Serializable;
 
-import com.joandora.test.proxy.JDInvocation;
+import com.joandora.test.proxy.InvocationEntity;
 
 /**
  * <p>
@@ -28,7 +28,7 @@ public class JDClientCall {
 
     private Serializable param; // 调用参数
 
-    private JDInvocation value; // 调用返回的值
+    private InvocationEntity value; // 调用返回的值
 
     private IOException error; // 异常信息
 
@@ -64,7 +64,7 @@ public class JDClientCall {
      * 
      * @param value return value of the call.
      */
-    public synchronized void setValue(JDInvocation value) {
+    public synchronized void setValue(InvocationEntity value) {
 	this.value = value;
 	callComplete(); // Call.done标志位被置位 即远程调用结果已经准备好 同时调用notify()
 			// 通知CClient.call()方法停止等待
@@ -110,7 +110,7 @@ public class JDClientCall {
     }
 
     
-    public JDInvocation getValue() {
+    public InvocationEntity getValue() {
         return value;
     }
 }

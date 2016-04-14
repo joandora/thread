@@ -1,7 +1,7 @@
 package com.joandora.examples;
 
 
-import com.joandora.test.proxy.JDRPCProxy;
+import com.joandora.test.proxy.RPCProxyWrapper;
 import com.joandora.test.server.JDServer;
 import com.joandora.test.util.JDNetUtils;
 
@@ -28,7 +28,7 @@ public class InstancedServer {
 		Echo instance = new EchoImpl();
 		ICode code = new CodeImpl();
 
-		JDServer server = JDRPCProxy.getServer(host, port);
+		JDServer server = RPCProxyWrapper.getServer(host, port);
 		server.inscribe(Echo.class, instance);
 		server.inscribe(ICode.class, code);
 		server.start();
